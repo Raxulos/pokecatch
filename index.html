@@ -47,6 +47,7 @@
 .wallpaper-night .slot-number{color:#25483e}
 .box-footer select{max-width:240px}
 @media(max-width:640px){.box-footer select{max-width:160px}.box-wallpaper{inset:-7px}}
+.formdex-note{margin:0 0 16px;color:var(--muted);font-size:11px;line-height:1.6}
 </style>
 </head>
 
@@ -63,6 +64,7 @@
 <div id="workspace" hidden>
   <section class="journey-bar"><div><div class="eyebrow">AKTUELLE REISE</div><h1 id="journey-title">Deine Pokémon-Boxen</h1><div id="trainer-display"></div></div><button class="quiet" onclick="goHome()">Reise wechseln ↗</button></section>
   <div class="collection-tools"><div id="dlc-container"></div><div class="mode-tools"><button id="forms-toggle" onclick="toggleFormsMode()" aria-pressed="false">Formen</button><button id="sort-toggle" onclick="toggleSortMode()" hidden>Formen separat</button><button id="shiny-toggle" onclick="toggleShinyMode()" aria-pressed="false">✧ Shiny-Ansicht</button></div></div>
+  <p id="formdex-note" class="formdex-note" hidden></p>
   <div class="storage-layout"><aside class="pokemon-panel" id="pokemon-detail" aria-label="Ausgewähltes Pokémon"></aside><main class="box-panel">
     <div class="box-heading"><div><div class="eyebrow">POKÉMON-LAGERUNG</div><h2 id="box-title">Box 01</h2><div id="box-range" class="muted"></div></div><div class="box-actions"><button id="view-toggle" type="button" onclick="toggleBoxView()" aria-pressed="false">▦ Alle Boxen</button><div class="box-arrows"><button id="prev-box" onclick="changeBox(-1)" aria-label="Vorherige Box">←</button><select id="box-select" aria-label="Box auswählen" onchange="chooseBox(Number(this.value))"></select><button id="next-box" onclick="changeBox(1)" aria-label="Nächste Box">→</button></div></div></div>
     <div class="box-search"><div class="search-field"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Name oder Pokédex-Nr. suchen …" aria-label="Pokémon suchen"><button id="clear-search" type="button" aria-label="Suche löschen" title="Suche löschen" onclick="clearSearch()" hidden>×</button></div><button id="next-match" class="quiet" onclick="nextMatch()" hidden>Nächster Treffer ↓</button><span id="search-result" class="muted" role="status"></span></div>
@@ -218,9 +220,63 @@
 
         const megaForms = {"3":[[10133,"Mega",10033,0,15]],"6":[[10134,"Mega X",10034,0,15],[10135,"Mega Y",10035,0,15]],"9":[[10136,"Mega",10036,0,15]],"15":[[10192,"Mega",10090,0,16]],"18":[[10175,"Mega",10073,0,16]],"26":[[10529,"Mega X",10304,0,31],[10530,"Mega Y",10305,0,31]],"36":[[10503,"Mega",10278,0,31]],"65":[[10137,"Mega",10037,0,15]],"71":[[10504,"Mega",10279,0,31]],"80":[[10173,"Mega",10071,0,16]],"94":[[10138,"Mega",10038,0,15]],"115":[[10139,"Mega",10039,0,15]],"121":[[10505,"Mega",10280,0,31]],"127":[[10140,"Mega",10040,0,15]],"130":[[10141,"Mega",10041,0,15]],"142":[[10142,"Mega",10042,0,15]],"149":[[10506,"Mega",10281,0,31]],"150":[[10143,"Mega X",10043,0,15],[10144,"Mega Y",10044,0,15]],"154":[[10507,"Mega",10282,0,31]],"160":[[10508,"Mega",10283,0,31]],"181":[[10145,"Mega",10045,0,15]],"208":[[10174,"Mega",10072,0,16]],"212":[[10146,"Mega",10046,0,15]],"214":[[10147,"Mega",10047,0,15]],"227":[[10509,"Mega",10284,0,31]],"229":[[10148,"Mega",10048,0,15]],"248":[[10149,"Mega",10049,0,15]],"254":[[10167,"Mega",10065,0,16]],"257":[[10150,"Mega",10050,0,15]],"260":[[10166,"Mega",10064,0,16]],"282":[[10151,"Mega",10051,0,15]],"302":[[10168,"Mega",10066,0,16]],"303":[[10152,"Mega",10052,0,15]],"306":[[10153,"Mega",10053,0,15]],"308":[[10154,"Mega",10054,0,15]],"310":[[10155,"Mega",10055,0,15]],"319":[[10172,"Mega",10070,0,16]],"323":[[10189,"Mega",10087,0,16]],"334":[[10169,"Mega",10067,0,16]],"354":[[10156,"Mega",10056,0,15]],"358":[[10531,"Mega",10306,0,31]],"359":[[10157,"Mega",10057,0,15],[10532,"Mega Z",10307,0,31]],"362":[[10176,"Mega",10074,0,16]],"373":[[10191,"Mega",10089,0,16]],"376":[[10178,"Mega",10076,0,16]],"380":[[10164,"Mega",10062,0,15]],"381":[[10165,"Mega",10063,0,15]],"384":[[10181,"Mega",10079,0,16]],"398":[[10533,"Mega",10308,0,31]],"428":[[10190,"Mega",10088,0,16]],"445":[[10158,"Mega",10058,0,15],[10534,"Mega Z",10309,0,31]],"448":[[10159,"Mega",10059,0,15],[10535,"Mega Z",10310,0,31]],"460":[[10160,"Mega",10060,0,15]],"475":[[10170,"Mega",10068,0,16]],"478":[[10510,"Mega",10285,0,31]],"485":[[10536,"Mega",10311,0,31]],"491":[[10537,"Mega",10312,0,31]],"500":[[10511,"Mega",10286,0,31]],"530":[[10512,"Mega",10287,0,31]],"531":[[10171,"Mega",10069,0,16]],"545":[[10513,"Mega",10288,0,31]],"560":[[10514,"Mega",10289,0,31]],"604":[[10515,"Mega",10290,0,31]],"609":[[10516,"Mega",10291,0,31]],"623":[[10538,"Mega",10313,0,31]],"652":[[10517,"Mega",10292,0,31]],"655":[[10518,"Mega",10293,0,31]],"658":[[10519,"Mega",10294,0,31]],"668":[[10520,"Mega",10295,0,31]],"670":[[10521,"Mega",10296,0,31]],"678":[[10539,"Mega Male",10314,0,31],[10554,"Mega Female",10326,0,31]],"687":[[10522,"Mega",10297,0,31]],"689":[[10523,"Mega",10298,0,31]],"691":[[10524,"Mega",10299,0,31]],"701":[[10525,"Mega",10300,0,31]],"718":[[10526,"Mega",10301,0,31]],"719":[[10177,"Mega",10075,0,16]],"740":[[10540,"Mega",10315,0,31]],"768":[[10541,"Mega",10316,0,31]],"780":[[10527,"Mega",10302,0,31]],"801":[[10542,"Mega",10317,0,31],[10543,"Mega",10318,0,31]],"807":[[10544,"Mega",10319,0,31]],"870":[[10528,"Mega",10303,0,31]],"952":[[10545,"Mega",10320,0,31]],"970":[[10546,"Mega",10321,0,31]],"978":[[10547,"Mega",10322,0,31],[10548,"Mega",10323,0,31],[10549,"Mega",10324,0,31]],"998":[[10550,"Mega",10325,0,31]]};
         const versionGenerations = {"1":1,"2":1,"3":2,"4":2,"5":3,"6":3,"7":3,"8":4,"9":4,"10":4,"11":5,"12":3,"13":3,"14":5,"15":6,"16":6,"17":7,"18":7,"19":7,"20":8,"21":8,"22":8,"23":8,"24":8,"25":9,"26":9,"27":9,"28":1,"29":1,"30":9,"31":9,"32":9};
+        // Einführungszeitpunkt allein reicht bei nicht übertragbaren Formen nicht aus.
+        const gameFormVersions={'kanto':2,'original-johto':4,'hoenn':6,'frbg':7,'colosseum':12,'xd':13,'sinnoh':8,'platinum':9,'heartgold-soulsilver':10,'sw1':11,'sw2':14,'kalos-central':15,'hoenn-oras':16,'alola':17,'ultra-alola':18,'lets-go-kanto':19,'galar':23,'bdsp':23,'hisui':24,'paldea':27,'za':31};
+        // Erhältlichkeit im Zielspiel (inkl. DLC, NPC-Tausch, Zucht und vergangenen Events).
+        // Reine HOME-/Bank-Importe zählen nicht als Erhalt im Zielspiel. HOME selbst bleibt umfassend.
+        const nativeRegionalForms={
+            alola:{Alola:[19,20,26,27,28,37,38,50,51,52,53,74,75,76,88,89,103,105]},
+            'ultra-alola':{Alola:[19,20,26,27,28,37,38,50,51,52,53,74,75,76,88,89,103,105]},
+            'lets-go-kanto':{Alola:[19,20,26,27,28,37,38,50,51,52,53,74,75,76,88,89,103,105]},
+            galar:{Alola:[26,27,28,37,38,50,51,52,53,103,105],Galar:[52,77,78,79,80,83,110,122,144,145,146,199,222,263,264,554,555,562,618]},
+            hisui:{Alola:[37,38],Hisui:[58,59,100,101,157,211,215,503,549,570,571,628,705,706,713,724]},
+            paldea:{Alola:[26,27,28,37,38,74,75,76,88,89,103],Galar:[52,79,80,199],Hisui:[58,59,100,101,157,211,503,570,571,724],Paldea:[128,194]}
+        };
+        function isFormAvailable(p, form, gameKey) {
+            const [id,name,,,introduced]=form;
+            // Das spätere Flügelmuster ist bei Purmel und Puponcho nicht sichtbar.
+            if(p.id===664 || p.id===665)return false;
+            if(name==='Starter' && (p.id===25 || p.id===133))return gameKey==='lets-go-kanto';
+            if(name.includes('Totem') && gameKey!=='ultra-alola')return false;
+            if(name==='Battle Bond' && !['alola','ultra-alola','home'].includes(gameKey))return false;
+            if(name==='Eternamax' || (p.id===493 && name==='Unknown') || p.id===414)return false;
+            if(gameKey==='home')return true;
+            const region=['Alola','Galar','Hisui','Paldea'].find(region=>name.startsWith(region));
+            if(region && gameKey!=='za' && !nativeRegionalForms[gameKey]?.[region]?.includes(p.id))return false;
+            if(p.id===666 && ['paldea','za'].includes(gameKey) && name==='Poke Ball')return false;
+            if(p.id===801 && name==='Original')return false;
+            if(p.id===550 && name==='White Striped' && !['hisui','paldea','za'].includes(gameKey))return false;
+            if(introduced>(gameFormVersions[gameKey] || 0))return false;
+            // Diese Spiele unterstützen keine Pikachu-Kappen bzw. keine fremden Regionalformen.
+            if(p.id===25 && name.includes('Cap') && !['alola','ultra-alola','galar'].includes(gameKey))return false;
+            if(gameKey==='bdsp' && /Alola|Galar|Hisui|Paldea/.test(name))return false;
+            if(gameKey==='hisui' && /Alola|Galar|Paldea/.test(name) && !(name==='Alola' && [37,38].includes(p.id)))return false;
+            return true;
+        }
+        function formSprites(p, form) {
+            const [,name,spriteId,isPixel]=form;
+            const root='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+            if(p.id===201) {
+                const filename='201-'+name.toLowerCase()+'.png';
+                return {sprite:root+'other/home/'+filename,shiny_sprite:root+'other/home/shiny/'+filename,icon:root+filename,shiny_icon:root+'shiny/'+filename};
+            }
+            if(name==='Female') {
+                return {sprite:root+'other/home/'+spriteId+'.png',shiny_sprite:root+'other/home/shiny/'+spriteId+'.png',icon:root+spriteId+'.png',shiny_icon:root+'shiny/'+spriteId+'.png'};
+            }
+            if(p.id===666) {
+                const filename='666-'+name.toLowerCase().replaceAll(' ','-')+'.png';
+                return {sprite:root+'other/home/'+filename,shiny_sprite:root+'other/home/shiny/'+filename,icon:root+filename,shiny_icon:root+'shiny/'+filename};
+            }
+            if(p.id===869) {
+                const filename=name==='G-Max'?'10223.png':'869-'+name.toLowerCase().replaceAll(' ','-')+'.png';
+                return {sprite:root+'other/home/'+filename,shiny_sprite:root+'other/home/shiny/'+filename,icon:root+(name==='G-Max'?'other/home/':'')+filename,shiny_icon:root+(name==='G-Max'?'other/home/shiny/':'shiny/')+filename};
+            }
+            return {sprite:root+(isPixel?'':'other/official-artwork/')+spriteId+'.png',shiny_sprite:root+(isPixel?'shiny/':'other/official-artwork/shiny/')+spriteId+'.png'};
+        }
         function getFormsForPokemon(p, maxGen, allowGmax) {
+            const gameKey=sessionMeta[currentSessionId]?.gameKey;
             let validForms = [];
-            if (maxGen >= 4 && genderDiffs.includes(p.id)) {
+            if (maxGen >= 4 && genderDiffs.includes(p.id) && !csvForms[p.id]?.some(form=>form[1]==='Female')) {
                 const deName = germanNames[p.id] || p.name_en;
                 validForms.push({
                     id: `${p.id}-f`, speciesId:p.id, entry: p.entry, name_en: deName + ' ♀', is_form: true, base_name: p.name_en,
@@ -231,20 +287,18 @@
             if(csvForms[p.id]) {
                 csvForms[p.id].forEach(form => {
                     const [fId, fName, sprId, isPixel, fGen] = form;
+                    if(!isFormAvailable(p,form,gameKey))return;
                     const gen = versionGenerations[fGen] || 9;
                     if (maxGen < 100) {
                         if (gen > maxGen) return;
                         if (fName === 'G-Max' && !allowGmax) return;
                     }
-                    let sprUrl = isPixel ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${sprId}.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${sprId}.png`;
-                    let shinySprUrl = isPixel ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${sprId}.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${sprId}.png`;
                     validForms.push({
-                        id: fId, speciesId:p.id, entry: p.entry, name_en: fName, is_form: true, base_name: p.name_en,
-                        sprite: sprUrl, shiny_sprite: shinySprUrl
+                        id:fId,speciesId:p.id,entry:p.entry,name_en:fName,is_form:true,base_name:p.name_en,
+                        ...formSprites(p,form)
                     });
                 });
             }
-            const gameKey=sessionMeta[currentSessionId]?.gameKey;
             if(['home','kalos-central','hoenn-oras','alola','ultra-alola','lets-go-kanto','za'].includes(gameKey)) {
                 const maxGroup=gameKey==='home'?31:gameKey==='za'?(currentDexId==='35'?31:30):gameKey==='kalos-central'?15:gameKey==='hoenn-oras'?16:19;
                 (megaForms[p.id] || []).filter(f=>f[4]<=maxGroup).forEach(([id,name,spriteId])=>{
@@ -264,7 +318,7 @@
             if (name.includes('Hisui')) return 'Hisui-Formen';
             if (name.includes('Paldea')) return 'Paldea-Formen';
             if (name.includes('Totem')) return 'Herrscher-Formen';
-            if (name.includes('♀')) return 'Geschlechtsunterschiede';
+            if (name.includes('♀') || name==='Female') return 'Geschlechtsunterschiede';
             if (name.includes('Cap') || name.includes('Mütze')) return 'Pikachu Kappen';
             if (f.base_name === 'unown') return 'Icognito Alphabet';
             if (f.base_name === 'alcremie') return 'Pokusan Süßigkeiten';
@@ -282,7 +336,9 @@
         function renderDex(f = '') {
             document.getElementById('clear-search').hidden=f.length===0;
             if(!currentSessionId || !sessionMeta[currentSessionId]) return;
-            const g = pokedexMap[sessionMeta[currentSessionId].gameKey]; boxes = [];
+            const gameKey=sessionMeta[currentSessionId].gameKey;
+            const note=document.getElementById('formdex-note');note.hidden=!isFormsMode;note.textContent=gameKey==='home'?'HOME: spielübergreifende Formensammlung.':'Formdex: im Spiel erhältlich · inklusive DLC und früherer Events · keine reinen HOME-Transfers.';
+            const g = pokedexMap[gameKey]; boxes = [];
             const appendBoxes = (list, title) => { for(let i=0;i<list.length;i+=30) boxes.push({title,items:list.slice(i,i+30)}); };
             if(isFormsMode && isFormSortSeparate) {
                 appendBoxes(pokemonList, 'Regional-Dex'); const categories = new Map();
@@ -354,7 +410,11 @@
             // Preserve form-specific artwork where no distinct pixel sprite exists.
             return isShinyMode?p.shiny_sprite:p.sprite;
         }
-        function caughtSetFor(shiny) { return new Set(globalStorage[currentSessionId+'_'+currentDexId+(shiny?'_shiny':'')] || []); }
+        // Frühere doppelte Geschlechtseinträge auf die eindeutige Form-ID abbilden.
+        const legacyFemaleFormIds=Object.fromEntries(Object.entries(csvForms).flatMap(([species,forms])=>{
+            const female=forms.find(form=>form[1]==='Female');return female?[[species+'-f',female[0]]]:[];
+        }));
+        function caughtSetFor(shiny) { return new Set((globalStorage[currentSessionId+'_'+currentDexId+(shiny?'_shiny':'')] || []).map(id=>legacyFemaleFormIds[id] || id)); }
         function selectedPokemon() { return boxes[activeBox]?.items.find(p=>p.id===selectedPokemonId); }
         function selectPokemon(id) { const index=boxes.findIndex(b=>b.items.some(p=>p.id===id));if(index<0)return;activeBox=index;selectedPokemonId=id;storeView(); document.querySelectorAll('.poke-slot[data-id]').forEach(el=>{const chosen=String(id)===el.dataset.id;el.classList.toggle('is-selected',chosen);el.setAttribute('aria-pressed',String(chosen));}); renderDetail(); }
         function renderDetail() {
