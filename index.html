@@ -241,6 +241,7 @@
             if(name==='Battle Bond' && !['alola','ultra-alola','home'].includes(gameKey))return false;
             if(name==='Eternamax' || (p.id===493 && name==='Unknown') || p.id===414)return false;
             if(gameKey==='home')return true;
+            if(p.id===25 && name.includes('Cap'))return ['alola','ultra-alola','galar'].includes(gameKey) && introduced<=(gameFormVersions[gameKey] || 0);
             const region=['Alola','Galar','Hisui','Paldea'].find(region=>name.startsWith(region));
             if(region && gameKey!=='za' && !nativeRegionalForms[gameKey]?.[region]?.includes(p.id))return false;
             if(p.id===666 && ['paldea','za'].includes(gameKey) && name==='Poke Ball')return false;
@@ -248,7 +249,6 @@
             if(p.id===550 && name==='White Striped' && !['hisui','paldea','za'].includes(gameKey))return false;
             if(introduced>(gameFormVersions[gameKey] || 0))return false;
             // Diese Spiele unterstützen keine Pikachu-Kappen bzw. keine fremden Regionalformen.
-            if(p.id===25 && name.includes('Cap') && !['alola','ultra-alola','galar'].includes(gameKey))return false;
             if(gameKey==='bdsp' && /Alola|Galar|Hisui|Paldea/.test(name))return false;
             if(gameKey==='hisui' && /Alola|Galar|Paldea/.test(name) && !(name==='Alola' && [37,38].includes(p.id)))return false;
             return true;
@@ -311,6 +311,7 @@
 
         function getFormCategory(f) {
             const name = f.name_en;
+            if (name.includes('Cap') || name.includes('Mütze')) return 'Pikachu Kappen';
             if (name.includes('Mega')) return 'Mega-Entwicklungen';
             if (name.includes('G-Max')) return 'Gigadynamax';
             if (name.includes('Alola')) return 'Alola-Formen';
@@ -319,7 +320,7 @@
             if (name.includes('Paldea')) return 'Paldea-Formen';
             if (name.includes('Totem')) return 'Herrscher-Formen';
             if (name.includes('♀') || name==='Female') return 'Geschlechtsunterschiede';
-            if (name.includes('Cap') || name.includes('Mütze')) return 'Pikachu Kappen';
+
             if (f.base_name === 'unown') return 'Icognito Alphabet';
             if (f.base_name === 'alcremie') return 'Pokusan Süßigkeiten';
             if (f.base_name === 'vivillon') return 'Vivillon Muster';
